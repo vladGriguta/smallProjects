@@ -35,7 +35,6 @@ class Solution:
         # 3. For each level compute the maximum distance between two nodes
         
         # base case 
-         # base case
         if not root: return 0
         a = [(root, 1)]
         res = 0
