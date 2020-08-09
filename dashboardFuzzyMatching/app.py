@@ -5,70 +5,75 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-import io
 import base64
 
 
 SUBMIT_BUTTON = [
     dbc.CardHeader(
         html.Div([
+            dbc.Card([
                 dcc.Upload(id='upload',
                     children=html.Div([
                         'Drag and Drop or ',html.A('Select Files')
                     ]),
                     style={
-                        'float':'center',
-                        'display': 'inline-block',
-                        'width': '70%',
-                        'height': '60px',
-                        'lineHeight': '60px',
-                        'borderWidth': '1px',
-                        'borderStyle': 'dashed',
-                        'borderRadius': '5px',
                         'textAlign': 'center',
+                        'borderStyle': 'dashed',
+                        'width': '100%',
+
+                        'float':'center',
+                        
+                        'height': '40px',
+                        'lineHeight': '40px',
+                        'borderWidth': '1px',
+                        
+                        'borderRadius': '5px',
+                        
                         'margin': '10px'
                     },
                     # Do not allow multiple files to be uploaded
                     multiple=False,
                 ),
 
-                dbc.CardHeader(html.H5("Columns to be matched")),
-                dbc.CardBody([
-                    dbc.Row([
-                        dbc.Col([
-                            dt.DataTable(
-                                id='original_column',
-                                style_table={'height': '300px', 'overflowY': 'auto'},
-                                style_header={'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
-                                fixed_rows={'headers': True},
-                                style_cell={'textAlign': 'center'},
-                                style_data_conditional=[{'if': {'row_index': 'odd'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
-                                ),
-                            ],
+            ]),
+
+            dbc.CardHeader(html.H5("Columns to be matched")),
+            dbc.CardBody([
+                dbc.Row([
+                    dbc.Col([
+                        dt.DataTable(
+                            id='original_column',
+                            style_table={'height': '300px', 'overflowY': 'auto'},
+                            style_header={'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
+                            fixed_rows={'headers': True},
+                            style_cell={'textAlign': 'center'},
+                            style_data_conditional=[{'if': {'row_index': 'odd'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
                             ),
-                        dbc.Col([
-                            dt.DataTable(
-                                id='matching_column',
+                        ],
+                        ),
+                    dbc.Col([
+                        dt.DataTable(
+                            id='matching_column',
 
-                                style_table={'height': '300px', 'overflowY': 'auto', 'width': '100%','minWidth': '100%',},
+                            style_table={'height': '300px', 'overflowY': 'auto', 'width': '100%','minWidth': '100%',},
 
-                                style_header={'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
-                                fixed_rows={'headers': True},
-                                style_cell={'textAlign': 'center'},
-                                style_data_conditional=[{'if': {'row_index': 'odd'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
-                                ),
-                            ],),
+                            style_header={'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
+                            fixed_rows={'headers': True},
+                            style_cell={'textAlign': 'center'},
+                            style_data_conditional=[{'if': {'row_index': 'odd'}, 'backgroundColor': 'rgb(248, 248, 248)'}],
+                            ),
                         ],),
+                    ],),
 
 
-                    dbc.Row(id='row-excluded-words'),
-                    dbc.Row([
-                        dbc.Col(dbc.Input(id="input-domain-specific-words", type="text")),
-                        dbc.Col(dbc.Button("Add word", id = 'add-button', color="success", className="mr-1"),width=2),
-                        dbc.Col(dbc.Button("Delete word", id = 'delete-button', color="danger", className="mr-1"),width=2),
-                        dbc.Col(dbc.Button("Reset word", id = 'reset-button', color="secondary", className="mr-1"),width=2),
-                        ]),
+                dbc.Row(id='row-excluded-words'),
+                dbc.Row([
+                    dbc.Col(dbc.Input(id="input-domain-specific-words", type="text")),
+                    dbc.Col(dbc.Button("Add word", id = 'add-button', color="success", className="mr-1"),width=2),
+                    dbc.Col(dbc.Button("Delete word", id = 'delete-button', color="danger", className="mr-1"),width=2),
+                    dbc.Col(dbc.Button("Reset word", id = 'reset-button', color="secondary", className="mr-1"),width=2),
                     ]),
+                ]),
             ],
             className="container")
         ),
@@ -200,9 +205,6 @@ wordList = []
 
 def updateWordList(word,n_clicks_add,n_clicks_delete):
 
-    if not n_clicks_add or n_clicks_delete:
-        raise dash.exceptions.PreventUpdate
-
     ctx = dash.callback_context
     if not ctx.triggered:
         raise dash.exceptions.PreventUpdate
@@ -213,16 +215,12 @@ def updateWordList(word,n_clicks_add,n_clicks_delete):
         raise dash.exceptions.PreventUpdate
 
     elif button_id == 'delete-button':
-        return [html.H5(wordList)]
         if word in wordList:
             wordList.remove(word)
-            return [html.H5(wordList)]
             
     elif button_id == 'add-button':
         if word not in wordList:
             wordList.append(word)
-
-
 
     childWordList = []
     for word in wordList:
@@ -233,7 +231,7 @@ def updateWordList(word,n_clicks_add,n_clicks_delete):
 @app.callback(Output('input-domain-specific-words','value'),
              [Input('reset-button','n_clicks')])
 def update(reset):
-    return 0
+    return ''
 
 if __name__ == "__main__":
-    app.run_server(debug=True,dev_tools_silence_routes_logging=False)
+    app.run_server(debug=False)
